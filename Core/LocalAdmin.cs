@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using LocalAdmin.V2.Commands.PluginManager;
 using LocalAdmin.V2.IO.Logging;
 using LocalAdmin.V2.PluginsManager;
+using System.Reflection.Metadata;
 
 namespace LocalAdmin.V2.Core;
 /*
@@ -663,7 +664,10 @@ public sealed class LocalAdmin : IDisposable
             if (!byte.TryParse(line.AsSpan(0, 1), NumberStyles.HexNumber, null, out var colorValue))
                 colorValue = (byte)ConsoleColor.Gray;
 
-            ConsoleUtil.WriteLine(line[1..], (ConsoleColor)colorValue);
+            string content = line[1..];
+            bool Debug = content.StartsWith("Debug_");
+            if (Debug) content = content.Remove(0, "Debug_".Length);
+            ConsoleUtil.WriteLine(content, (ConsoleColor)colorValue, log:true, display:!Debug);
         };
         Server.Start();
     }
@@ -808,6 +812,10 @@ public sealed class LocalAdmin : IDisposable
                 if (!redirectStreams || string.IsNullOrWhiteSpace(args.Data))
                     return;
 
+
+                if (CheckRedundantLog(args.Data)) return;
+
+
                 ConsoleUtil.WriteLine("[STDOUT] " + args.Data, ConsoleColor.Gray,
                     log: Configuration.LaLogStdoutStderr,
                     display: printStd);
@@ -885,6 +893,18 @@ public sealed class LocalAdmin : IDisposable
             else
                 Exit(1);
         }
+    }
+
+    private bool CheckRedundantLog(string data)
+    {
+        if (data.StartsWith("[T8]")) data = data.Substring(5);
+        if (data.StartsWith("A scripted object")) return true;
+        if (data.StartsWith("Did you #ifdef UNITY_EDITOR a section ")) return true;
+        if (data.StartsWith("The referenced script ")) return true;
+        if (data.StartsWith("WARNING: Shader ")) return true;
+        if (data.StartsWith("ERROR: Shader ")) return true;
+        if (data.StartsWith("Fallback handler could not load library")) return true;
+        return false;
     }
 
     private void RegisterCommands()
