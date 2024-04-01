@@ -665,6 +665,7 @@ public sealed class LocalAdmin : IDisposable
                 colorValue = (byte)ConsoleColor.Gray;
 
             string content = line[1..];
+            Console.WriteLine(content);
             bool Debug = content.StartsWith("Debug_");
             if (Debug) content = content.Remove(0, "Debug_".Length);
             ConsoleUtil.WriteLine(content, (ConsoleColor)colorValue, log:true, display:!Debug);
