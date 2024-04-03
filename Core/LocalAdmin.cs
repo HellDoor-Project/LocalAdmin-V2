@@ -807,9 +807,12 @@ public sealed class LocalAdmin : IDisposable
                 RedirectStandardError = true
             };
             foreach (string configLine in EnvironmentVariables) {
+                if (configLine.Trim().Length == 0) continue;
                 if (configLine.StartsWith("#")) continue;
-                string keyName = configLine.Split('=')[0].Trim();
-                string value = configLine.Split("=")[1].Trim();
+                string[] lineSplit = configLine.Split('=');
+                if (lineSplit.Length < 2) continue;
+                string keyName = lineSplit[0].Trim();
+                string value = lineSplit[1].Trim();
                 startInfo.EnvironmentVariables[keyName] = value;
             }
 
