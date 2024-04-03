@@ -48,6 +48,7 @@ public sealed class LocalAdmin : IDisposable
 
     internal readonly CommandService CommandService = new();
     private readonly string _scpslExecutable;
+    private string _ConfigFileName;
     private volatile bool _processClosing;
     private bool _idleMode;
     private uint _heartbeatSpanMaxThreshold;
@@ -108,6 +109,7 @@ public sealed class LocalAdmin : IDisposable
 
     internal LocalAdmin()
     {
+        _ConfigFileName = ".ENV";
         if (OperatingSystem.IsWindows())
             _scpslExecutable = "SCPSL.exe";
         else if (OperatingSystem.IsLinux())
@@ -774,6 +776,11 @@ public sealed class LocalAdmin : IDisposable
 
     private void RunScpsl()
     {
+        string[] EnvironmentVariables = new string[0];
+        if (File.Exists(_ConfigFileName))
+        {
+            EnvironmentVariables = File.ReadAllLines(_ConfigFileName);
+        }
         if (File.Exists(_scpslExecutable))
         {
             ConsoleUtil.WriteLine("Executing: " + _scpslExecutable, ConsoleColor.DarkGreen);
@@ -799,6 +806,12 @@ public sealed class LocalAdmin : IDisposable
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
+            foreach (string configLine in EnvironmentVariables) {
+                if (configLine.StartsWith("#")) continue;
+                string keyName = configLine.Split('=')[0].Trim();
+                string value = configLine.Split("=")[1].Trim();
+                startInfo.EnvironmentVariables[keyName] = value;
+            }
 
             _gameProcess = Process.Start(startInfo);
 
