@@ -41,6 +41,7 @@ public sealed class LocalAdmin : IDisposable
     private static string _gameArguments = string.Empty;
     private static bool _exit, _processRefreshFail;
     private static bool _noTrueColor;
+    private static bool _serverStartup;
     private static bool _stdPrint;
     private static bool _ignoreNextRestart;
     private static bool _noTerminalTitle;
@@ -579,7 +580,7 @@ public sealed class LocalAdmin : IDisposable
         // Terminate the game, if the game process is exists
         if (_gameProcess is { HasExited: false })
             TerminateGame();
-
+        _serverStartup = false;
         Menu();
         SetTerminalTitle();
         Logger.Initialize();
@@ -667,6 +668,21 @@ public sealed class LocalAdmin : IDisposable
                 colorValue = (byte)ConsoleColor.Gray;
 
             string content = line[1..];
+            if (content == Program.SERVER_STARTUP_MSG)
+            {
+                _serverStartup = true;
+            }
+            else if (content == Program.UNITY_FASTMENU_SCENE_LOADED && !_serverStartup)
+            {
+                ConsoleUtil.WriteLine("Game server has probably crashed on startup. Restarting the server...", ConsoleColor.Red);
+                HeartbeatStopwatch.Reset();
+
+                DisableExitActionSignals = true;
+                ExitAction = ShutdownAction.Crash;
+
+                _exit = true;
+                return;
+            }
             bool Debug = content.StartsWith("Debug_");
             if (Debug) content = content.Remove(0, "Debug_".Length);
             ConsoleUtil.WriteLine(content, (ConsoleColor)colorValue, log:true, display:!Debug);
@@ -1106,7 +1122,7 @@ public sealed class LocalAdmin : IDisposable
                 break;
         }
     }
-
+    private static bool _HeartbeatStartRun = false;
     private void StartHeartbeatMonitoring()
     {
         async void HeartbeatMonitoringMethod()
@@ -1140,7 +1156,8 @@ public sealed class LocalAdmin : IDisposable
                     }
                 }
             }
-
+            if (_HeartbeatStartRun) return;
+            _HeartbeatStartRun = true;
             while (!_exit)
             {
                 switch (CurrentHeartbeatStatus)

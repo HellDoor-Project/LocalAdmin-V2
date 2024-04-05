@@ -4,6 +4,9 @@ namespace LocalAdmin.V2.Core;
 
 internal static class Program
 {
+    public const string SERVER_STARTUP_MSG = "Starting server...";
+    public const string UNITY_FASTMENU_SCENE_LOADED = "Scene Manager: Loaded scene 'FastMenu' [Assets/_Scenes/FastMenu.unity]";
+
     private static async Task Main(string[] args)
     {
         Utf8Json.Resolvers.CompositeResolver.RegisterAndSetAsDefault(
