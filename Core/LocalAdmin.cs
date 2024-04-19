@@ -844,6 +844,17 @@ public sealed class LocalAdmin : IDisposable
                 if (!redirectStreams || string.IsNullOrWhiteSpace(args.Data))
                     return;
 
+                if (args.Data.StartsWith(Program.IOEXCEPTION_SHARING_VIOLATION) && !_serverStartup)
+                {
+                    ConsoleUtil.WriteLine("Game server has probably crashed on startup. Restarting the server...", ConsoleColor.Red);
+                    HeartbeatStopwatch.Reset();
+
+                    DisableExitActionSignals = true;
+                    ExitAction = ShutdownAction.Crash;
+
+                    _exit = true;
+                    return;
+                }
 
                 if (CheckRedundantLog(args.Data)) return;
 
