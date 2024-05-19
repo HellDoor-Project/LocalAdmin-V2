@@ -672,7 +672,7 @@ public sealed class LocalAdmin : IDisposable
             string content = line[1..];
             if (content.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
             {
-                SyncPluginData = content.Substring(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
+                SyncPluginData = content.Remove(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
                 ConsoleUtil.WriteLine("[SYNC] " + content, ConsoleColor.DarkYellow,
                 log: true,
                 display: true);
