@@ -670,6 +670,14 @@ public sealed class LocalAdmin : IDisposable
                 colorValue = (byte)ConsoleColor.Gray;
 
             string content = line[1..];
+            if (content.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
+            {
+                SyncPluginData = content.Substring(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
+                ConsoleUtil.WriteLine("[SYNC] " + content, ConsoleColor.DarkYellow,
+                log: true,
+                display: true);
+                return;
+            }
             if (content == Program.SERVER_STARTUP_MSG)
             {
                 _serverStartup = true;
@@ -860,15 +868,6 @@ public sealed class LocalAdmin : IDisposable
                 }
 
                 if (CheckRedundantLog(args.Data)) return;
-
-                if (args.Data.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
-                {
-                    SyncPluginData = args.Data.Substring(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
-                    ConsoleUtil.WriteLine("[SYNC] " + args.Data, ConsoleColor.DarkYellow,
-                    log: true,
-                    display: true);
-                    return;
-                }
 
                 ConsoleUtil.WriteLine("[STDOUT] " + args.Data, ConsoleColor.Gray,
                     log: Configuration.LaLogStdoutStderr,
