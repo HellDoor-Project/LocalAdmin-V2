@@ -864,6 +864,9 @@ public sealed class LocalAdmin : IDisposable
                 if (args.Data.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
                 {
                     SyncPluginData = args.Data.Substring(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
+                    ConsoleUtil.WriteLine("[SYNC] " + args.Data, ConsoleColor.DarkYellow,
+                    log: true,
+                    display: true);
                     return;
                 }
 
