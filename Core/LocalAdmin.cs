@@ -34,6 +34,8 @@ public sealed class LocalAdmin : IDisposable
     public const string VersionString = "2.5.14";
     private const ushort DefaultPort = 7777;
 
+    private static string SyncPluginData = "";
+
     private static readonly ConcurrentQueue<string> InputQueue = new();
     private static readonly Stopwatch RestartsStopwatch = new();
     private static string? _previousPat;
@@ -831,6 +833,7 @@ public sealed class LocalAdmin : IDisposable
                 string value = lineSplit[1].Trim();
                 startInfo.EnvironmentVariables[keyName] = value;
             }
+            startInfo.EnvironmentVariables["SyncPluginData"] = SyncPluginData;
 
             _gameProcess = Process.Start(startInfo);
 
@@ -858,6 +861,11 @@ public sealed class LocalAdmin : IDisposable
 
                 if (CheckRedundantLog(args.Data)) return;
 
+                if (args.Data.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
+                {
+                    SyncPluginData = args.Data.Substring(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
+                    return;
+                }
 
                 ConsoleUtil.WriteLine("[STDOUT] " + args.Data, ConsoleColor.Gray,
                     log: Configuration.LaLogStdoutStderr,
