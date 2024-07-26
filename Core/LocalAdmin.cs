@@ -867,7 +867,7 @@ public sealed class LocalAdmin : IDisposable
                     return;
                 }
 
-                //if (CheckRedundantLog(args.Data)) return;
+                if (CheckRedundantLog(args.Data)) return;
 
                 ConsoleUtil.WriteLine("[STDOUT] " + args.Data, ConsoleColor.Gray,
                     log: Configuration.LaLogStdoutStderr,
