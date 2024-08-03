@@ -639,7 +639,7 @@ public sealed class LocalAdmin : IDisposable
                         case 320: //80 seconds
                             ConsoleUtil.WriteLine("Server had not started! Stopping");
                             DisableExitActionSignals = true;
-                            ExitAction = ShutdownAction.Crash;
+                            ExitAction = ShutdownAction.Restart;
 
                             _exit = true;
                             return;
@@ -662,7 +662,7 @@ public sealed class LocalAdmin : IDisposable
                 {
                     ConsoleUtil.WriteLine("Server had crashed.");
                     DisableExitActionSignals = true;
-                    ExitAction = ShutdownAction.Crash;
+                    ExitAction = ShutdownAction.Restart;
 
                     _exit = true;
                     return;
