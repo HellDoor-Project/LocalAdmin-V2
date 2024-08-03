@@ -35,6 +35,8 @@ public sealed class LocalAdmin : IDisposable
     private const ushort DefaultPort = 7777;
 
     private static string SyncPluginData = "";
+    public static ServerStatus currentServerStatus = ServerStatus.Initializing;
+    public static DateTime lastMessageReceived = DateTime.Now;
 
     private static readonly ConcurrentQueue<string> InputQueue = new();
     private static readonly Stopwatch RestartsStopwatch = new();
@@ -102,7 +104,15 @@ public sealed class LocalAdmin : IDisposable
         LogLengthLimit,
         LogEntriesLimit
     }
-
+    public enum ServerStatus : byte
+    {
+        Initializing = 0,
+        WaitingForPlayers = 1,
+        RoundStarted = 2,
+        RoundEnded = 4,
+        Restarting = 8,
+        Running = 16
+    }
     internal enum HeartbeatStatus : byte
     {
         Disabled,
@@ -590,6 +600,8 @@ public sealed class LocalAdmin : IDisposable
         ConsoleUtil.WriteLine($"Started new session on port {GamePort}.", ConsoleColor.DarkGreen);
         ConsoleUtil.WriteLine("Trying to start server...", ConsoleColor.Gray);
 
+        HandleIntegrationPluginOutput();
+
         SetupServer();
 
         while (Server!.ConsolePort == 0)
@@ -608,6 +620,56 @@ public sealed class LocalAdmin : IDisposable
         ConsoleUtil.WriteLine(string.Empty, ConsoleColor.Cyan);
         ConsoleUtil.WriteLine("Type 'help' to get list of available commands.", ConsoleColor.Cyan);
         ConsoleUtil.WriteLine(string.Empty, ConsoleColor.Cyan);
+    }
+
+    private void HandleIntegrationPluginOutput()
+    {
+        async void IntegrationMonitoringMethod()
+        {
+            {
+                ushort i = 0;
+
+                while (currentServerStatus == ServerStatus.Initializing)
+                {
+                    if (_exit)
+                        return;
+
+                    switch (i)
+                    {
+                        case 320: //80 seconds
+                            DisableExitActionSignals = true;
+                            ExitAction = ShutdownAction.Crash;
+
+                            _exit = true;
+                            return;
+
+                        case < 320:
+                            i++;
+                            await Task.Delay(250);
+                            break;
+
+                        default:
+                            await Task.Delay(1000);
+                            break;
+                    }
+                }
+            }
+            while (!_exit)
+            {
+                if ((DateTime.Now - lastMessageReceived).TotalSeconds > 5)
+                {
+                    Console.WriteLine("Server had crashed.");
+                    DisableExitActionSignals = true;
+                    ExitAction = ShutdownAction.Crash;
+
+                    _exit = true;
+                    return;
+                }
+                await Task.Delay(500);
+            }
+        }
+        Task _integrationMonitoringTask = new Task(IntegrationMonitoringMethod);
+        _integrationMonitoringTask.Start();
     }
 
     private static void SetupExitHandlers()
@@ -670,6 +732,33 @@ public sealed class LocalAdmin : IDisposable
                 colorValue = (byte)ConsoleColor.Gray;
 
             string content = line[1..];
+            if (content.StartsWith(Program.LA_INTEGRATION_STATUS))
+            {
+                string byteInfo = content.Remove(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
+                if (byte.TryParse(byteInfo, out byte status)) {
+                    lastMessageReceived = DateTime.Now;
+                    switch (status)
+                    {
+                        case (byte)ServerStatus.Initializing:
+                            currentServerStatus = ServerStatus.Initializing;
+                            break;
+                        case (byte)ServerStatus.WaitingForPlayers:
+                            currentServerStatus = ServerStatus.WaitingForPlayers;
+                            break;
+                        case (byte)ServerStatus.RoundStarted:
+                            currentServerStatus = ServerStatus.RoundStarted;
+                            break;
+                        case (byte)ServerStatus.RoundEnded:
+                            currentServerStatus = ServerStatus.RoundEnded;
+                            break;
+                        case (byte)ServerStatus.Restarting:
+                            currentServerStatus = ServerStatus.Restarting;
+                            break;
+                        default: return;
+                    }
+                    Console.WriteLine("Current status set to: " + currentServerStatus.ToString());
+                }
+            }
             if (content.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
             {
                 SyncPluginData = content.Remove(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
