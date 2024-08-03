@@ -655,10 +655,11 @@ public sealed class LocalAdmin : IDisposable
                     }
                 }
             }
+            lastMessageReceived = DateTime.Now;
             while (!_exit)
             {
                 //Console.WriteLine($"Last message received in {(DateTime.Now - lastMessageReceived).TotalSeconds} seconds");
-                if ((DateTime.Now - lastMessageReceived).TotalSeconds > 5)
+                if ((DateTime.Now - lastMessageReceived).TotalSeconds > 15)
                 {
                     ConsoleUtil.WriteLine("Server had crashed.");
                     DisableExitActionSignals = true;
