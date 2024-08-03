@@ -757,6 +757,7 @@ public sealed class LocalAdmin : IDisposable
                         default: return;
                     }
                     Console.WriteLine("Current status set to: " + currentServerStatus.ToString());
+                    return;
                 }
             }
             if (content.StartsWith(Program.SYNC_PLUGIN_DATA_MESSAGE))
