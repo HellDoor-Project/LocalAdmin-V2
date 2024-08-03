@@ -937,12 +937,33 @@ public sealed class LocalAdmin : IDisposable
             startInfo.EnvironmentVariables["SyncPluginData"] = SyncPluginData;
 
             _gameProcess = Process.Start(startInfo);
-            if (GamePort == 7404)
+            switch (GamePort)
             {
-                _gameProcess!.ProcessorAffinity = 0x3;
+                case 7404:
+                    _gameProcess!.ProcessorAffinity = 0x3;
+                    break;
+                case 7622:
+                    _gameProcess!.ProcessorAffinity = 0xC;
+                    break;
+                case 7625:
+                    _gameProcess!.ProcessorAffinity = 0x30;
+                    break;
+                case 7888:
+                    _gameProcess!.ProcessorAffinity = 0xC0;
+                    break;
+                case 7928:
+                    _gameProcess!.ProcessorAffinity = 0x300;
+                    break;
+                case 8767:
+                    _gameProcess!.ProcessorAffinity = 0xC00;
+                    break;
+                case 7405:
+                    _gameProcess!.ProcessorAffinity = 0x3000;
+                    break;
+                default:
+                    _gameProcess!.ProcessorAffinity = 0xC000;
+                    break;
             }
-            else
-                _gameProcess!.ProcessorAffinity = 0xFFFC;
 
             
             _processId = _gameProcess!.Id;
