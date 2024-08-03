@@ -637,6 +637,7 @@ public sealed class LocalAdmin : IDisposable
                     switch (i)
                     {
                         case 320: //80 seconds
+                            Console.WriteLine("Server had not started! Stopping");
                             DisableExitActionSignals = true;
                             ExitAction = ShutdownAction.Crash;
 
