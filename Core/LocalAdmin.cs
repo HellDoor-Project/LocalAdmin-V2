@@ -937,7 +937,14 @@ public sealed class LocalAdmin : IDisposable
             startInfo.EnvironmentVariables["SyncPluginData"] = SyncPluginData;
 
             _gameProcess = Process.Start(startInfo);
+            if (GamePort == 7404)
+            {
+                _gameProcess!.ProcessorAffinity = 0x3;
+            }
+            else
+                _gameProcess!.ProcessorAffinity = 0xFFFC;
 
+            
             _processId = _gameProcess!.Id;
             SetTerminalTitle();
 
