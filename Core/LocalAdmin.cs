@@ -637,7 +637,7 @@ public sealed class LocalAdmin : IDisposable
                     switch (i)
                     {
                         case 320: //80 seconds
-                            Console.WriteLine("Server had not started! Stopping");
+                            ConsoleUtil.WriteLine("Server had not started! Stopping");
                             DisableExitActionSignals = true;
                             ExitAction = ShutdownAction.Crash;
 
@@ -660,7 +660,7 @@ public sealed class LocalAdmin : IDisposable
                 //Console.WriteLine($"Last message received in {(DateTime.Now - lastMessageReceived).TotalSeconds} seconds");
                 if ((DateTime.Now - lastMessageReceived).TotalSeconds > 5)
                 {
-                    Console.WriteLine("Server had crashed.");
+                    ConsoleUtil.WriteLine("Server had crashed.");
                     DisableExitActionSignals = true;
                     ExitAction = ShutdownAction.Crash;
 
@@ -758,7 +758,7 @@ public sealed class LocalAdmin : IDisposable
                             break;
                         default: return;
                     }
-                    Console.WriteLine("Current status set to: " + currentServerStatus.ToString());
+                    ConsoleUtil.WriteLine("Current status set to: " + currentServerStatus.ToString());
                     return;
                 }
             }
