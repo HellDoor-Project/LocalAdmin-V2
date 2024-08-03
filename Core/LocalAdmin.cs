@@ -735,7 +735,7 @@ public sealed class LocalAdmin : IDisposable
             string content = line[1..];
             if (content.StartsWith(Program.LA_INTEGRATION_STATUS))
             {
-                string byteInfo = content.Remove(0, Program.SYNC_PLUGIN_DATA_MESSAGE.Length);
+                string byteInfo = content.Remove(0, Program.LA_INTEGRATION_STATUS.Length);
                 if (byte.TryParse(byteInfo, out byte status)) {
                     lastMessageReceived = DateTime.Now;
                     switch (status)
