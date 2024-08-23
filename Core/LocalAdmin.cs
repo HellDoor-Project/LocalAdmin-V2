@@ -940,28 +940,28 @@ public sealed class LocalAdmin : IDisposable
             switch (GamePort)
             {
                 case 7404:
-                    _gameProcess!.ProcessorAffinity = 0x3;
+                    _gameProcess!.ProcessorAffinity = 0x10003;
                     break;
                 case 7622:
-                    _gameProcess!.ProcessorAffinity = 0xC;
+                    _gameProcess!.ProcessorAffinity = 0x2000C;
                     break;
                 case 7625:
-                    _gameProcess!.ProcessorAffinity = 0x30;
+                    _gameProcess!.ProcessorAffinity = 0x40030;
                     break;
                 case 7888:
-                    _gameProcess!.ProcessorAffinity = 0xC0;
+                    _gameProcess!.ProcessorAffinity = 0x800C0;
                     break;
                 case 7928:
-                    _gameProcess!.ProcessorAffinity = 0x300;
+                    _gameProcess!.ProcessorAffinity = 0x100300;
                     break;
                 case 8767:
-                    _gameProcess!.ProcessorAffinity = 0xC00;
+                    _gameProcess!.ProcessorAffinity = 0x200C00;
                     break;
                 case 7405:
-                    _gameProcess!.ProcessorAffinity = 0x3000;
+                    _gameProcess!.ProcessorAffinity = 0x403000;
                     break;
                 default:
-                    _gameProcess!.ProcessorAffinity = 0xC000;
+                    _gameProcess!.ProcessorAffinity = 0x80C000;
                     break;
             }
 
