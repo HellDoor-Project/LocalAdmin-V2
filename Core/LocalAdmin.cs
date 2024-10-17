@@ -662,6 +662,7 @@ public sealed class LocalAdmin : IDisposable
                 if ((DateTime.Now - lastMessageReceived).TotalSeconds > 15)
                 {
                     ConsoleUtil.WriteLine("Server had crashed.");
+                    lastMessageReceived = DateTime.Now;
                     DisableExitActionSignals = true;
                     ExitAction = ShutdownAction.Restart;
 
