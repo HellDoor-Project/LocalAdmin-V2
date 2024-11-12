@@ -958,7 +958,14 @@ public sealed class LocalAdmin : IDisposable
                 default:
                     Environment.Exit(-1);
                     break;*/
-                case 7404:
+                // ===================================
+                // ===================================
+                // ===================================
+                // ===================================
+                // ===================================
+                // ===================================
+                // ===================================
+                /*case 7404:
                     _gameProcess!.ProcessorAffinity = 0x3;
                     break;
                 case 7622:
@@ -978,9 +985,12 @@ public sealed class LocalAdmin : IDisposable
                     break;
                 case 7405:
                     _gameProcess!.ProcessorAffinity = 0x3000;
-                    break;
-                default:
+                    break;*/
+                /*default:
                     _gameProcess!.ProcessorAffinity = 0xC000;
+                    break;*/
+                default:
+                    _gameProcess!.ProcessorAffinity = 0xFFFF;
                     break;
             }
 
