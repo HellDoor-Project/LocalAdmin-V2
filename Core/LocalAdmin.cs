@@ -1122,6 +1122,15 @@ public sealed class LocalAdmin : IDisposable
         if (data.StartsWith("WARNING: Shader ")) return true;
         if (data.StartsWith("ERROR: Shader ")) return true;
         if (data.StartsWith("Fallback handler could not load library")) return true;
+        if (data.StartsWith("Trying to access a shader")) return true;
+        if (data.StartsWith("Action name")) return true;
+        if (data.StartsWith("If you absolutely need to use negative")) return true;
+        if (data.StartsWith("The effective box size has been forced positive")) return true;
+        if (data.StartsWith("BoxCollider does not support negative")) return true;
+        if (data.StartsWith("[T11]")) return true;
+        if (data.StartsWith("No mesh data available for mesh")) return true;
+        if (data.StartsWith("Unable to load font face")) return true;
+
         return false;
     }
 
